@@ -1,0 +1,18 @@
+package com.mashiro;
+
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+/**
+ * web容器中进行部署
+ * 
+ * @author ruoyi
+ */
+public class CheweHubServletInitializer extends SpringBootServletInitializer
+{
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application)
+    {
+        return application.sources(CheweHubApplication.class);
+    }
+}

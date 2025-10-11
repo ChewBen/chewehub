@@ -1,0 +1,316 @@
+# CheweHub项目开发规则
+
+## 项目架构
+- 后端：Spring Boot + MyBatis Plus + Maven多模块架构
+- 前端：Vue 3 + Vite + Element Plus + ECharts
+- 数据库：MySQL
+- 缓存：Redis
+
+## ECharts使用规范
+
+### 1. ECharts组件实现方式
+基于vue-echarts组件库的实现模式，项目中ECharts的使用应遵循以下规范：
+
+#### 组件封装方式
+```vue
+<template>
+  <v-chart :option="chartOption" :style="chartStyle" @click="handleChartClick" />
+</template>
+
+<script>
+import VChart from 'vue-echarts'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, BarChart, PieChart, ScatterChart, HeatmapChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent, LegendComponent, GridComponent, CalendarComponent, VisualMapComponent } from 'echarts/components'
+
+// 按需引入ECharts组件
+use([
+  CanvasRenderer,
+  LineChart,
+  BarChart,
+  PieChart,
+  ScatterChart,
+  HeatmapChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  CalendarComponent,
+  VisualMapComponent
+])
+
+export default {
+  components: {
+    VChart
+  },
+  data() {
+    return {
+      chartOption: {
+        // ECharts配置对象
+      }
+    }
+  }
+}
+</script>
+```
+
+#### 响应式更新
+- 通过监听`option`属性的变化自动更新图表
+- 使用Vue的响应式系统确保数据变化时图表同步更新
+- 避免手动调用`setOption`方法
+
+#### 事件处理
+```vue
+<template>
+  <v-chart 
+    :option="chartOption" 
+    @click="handleClick"
+    @mouseover="handleMouseOver"
+    @mouseout="handleMouseOut"
+  />
+</template>
+
+<script>
+export default {
+  methods: {
+    handleClick(params) {
+      // 处理图表点击事件
+      console.log('图表点击:', params)
+    },
+    handleMouseOver(params) {
+      // 处理鼠标悬停事件
+    },
+    handleMouseOut(params) {
+      // 处理鼠标离开事件
+    }
+  }
+}
+</script>
+```
+
+### 2. 现有项目ECharts使用规范
+
+#### 工具函数封装
+项目中的`src/utils/echarts.js`提供了ECharts工具函数，应遵循以下规范：
+
+```javascript
+// 创建图表实例
+export function createChart(id, option) {
+  const element = document.getElementById(id)
+  
+  // 检查是否已有实例，避免重复创建
+  const existingChart = echarts.getInstanceByDom(element)
+  if (existingChart) {
+    existingChart.dispose()
+  }
+  
+  const chart = echarts.init(element)
+  chart.setOption(option)
+  
+  // 监听窗口大小变化
+  window.addEventListener('resize', () => chart.resize())
+  return chart
+}
+
+// 更新图表数据
+export function updateChartData(chart, newData) {
+  chart.setOption({
+    series: [{
+      data: newData
+    }]
+  })
+}
+```
+
+#### 样式规范
+```javascript
+// 统一的图表样式配置
+export const chartTheme = {
+  backgroundColor: '#f9fafb',
+  textStyle: {
+    color: '#000000'
+  },
+  tooltip: {
+    backgroundColor: '#ffffff',
+    borderColor: '#e5e7eb',
+    textStyle: {
+      color: '#000000'
+    }
+  }
+}
+```
+
+### 3. 组件开发规范
+
+#### 图表组件结构
+```vue
+<template>
+  <div class="chart-container">
+    <v-chart 
+      :option="chartOption" 
+      :style="chartStyle"
+      :loading="loading"
+      @click="handleChartClick"
+    />
+  </div>
+</template>
+
+<script>
+import VChart from 'vue-echarts'
+import { chartTheme } from '@/utils/echarts'
+
+export default {
+  name: 'ChartComponent',
+  components: {
+    VChart
+  },
+  props: {
+    data: {
+      type: Array,
+      default: () => []
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    chartOption() {
+      return {
+        ...chartTheme,
+        // 基于props.data生成图表配置
+      }
+    },
+    chartStyle() {
+      return {
+        width: '100%',
+        height: '400px'
+      }
+    }
+  },
+  methods: {
+    handleChartClick(params) {
+      this.$emit('chart-click', params)
+    }
+  }
+}
+</script>
+
+<style scoped>
+.chart-container {
+  width: 100%;
+  height: 100%;
+}
+</style>
+```
+
+### 4. 性能优化
+
+#### 按需引入
+```javascript
+// 只引入需要的ECharts组件
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent } from 'echarts/components'
+
+use([
+  CanvasRenderer,
+  LineChart,
+  TitleComponent,
+  TooltipComponent
+])
+```
+
+#### 内存管理
+```javascript
+// 组件销毁时清理图表实例
+export default {
+  beforeUnmount() {
+    if (this.chart) {
+      this.chart.dispose()
+    }
+  }
+}
+```
+
+### 5. 数据格式规范
+
+#### 日历热力图数据格式
+```javascript
+// 还款日历数据格式
+const calendarData = [
+  ['2025-01-01', 5000], // [日期, 金额]
+  ['2025-01-02', 3000]
+]
+```
+
+#### 通用图表数据格式
+```javascript
+// 折线图/柱状图数据格式
+const lineData = {
+  categories: ['1月', '2月', '3月'],
+  series: [
+    {
+      name: '还款金额',
+      data: [1000, 2000, 1500]
+    }
+  ]
+}
+```
+
+## 代码规范
+
+### 1. 命名规范
+- 组件名使用PascalCase：`RepaymentChart.vue`
+- 方法名使用camelCase：`handleChartClick`
+- 常量使用UPPER_SNAKE_CASE：`CHART_THEME`
+
+### 2. 注释规范
+```javascript
+/**
+ * 创建还款日历图表
+ * @param {string} id - 容器元素ID
+ * @param {Array} repaymentData - 还款数据数组
+ * @returns {Object} ECharts实例
+ */
+export function createRepaymentCalendar(id, repaymentData = []) {
+  // 实现代码
+}
+```
+
+### 3. 错误处理
+```javascript
+try {
+  const chart = echarts.init(element)
+  chart.setOption(option)
+} catch (error) {
+  console.error('图表初始化失败:', error)
+  // 显示错误提示
+}
+```
+
+## 开发建议
+
+1. **优先使用vue-echarts组件**：相比原生ECharts，vue-echarts提供了更好的Vue集成
+2. **按需引入**：只引入项目实际使用的ECharts组件，减少打包体积
+3. **响应式设计**：确保图表在不同屏幕尺寸下正常显示
+4. **性能优化**：大数据量时考虑数据分页或虚拟滚动
+5. **用户体验**：添加加载状态和错误处理
+
+## 文件组织
+
+```
+src/
+├── components/
+│   └── charts/           # 图表组件目录
+│       ├── RepaymentChart.vue
+│       ├── StatisticsChart.vue
+│       └── index.js      # 组件导出
+├── utils/
+│   └── echarts.js        # ECharts工具函数
+└── views/
+    └── report/           # 报表页面
+        └── index.vue
+```

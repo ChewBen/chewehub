@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashiro.business.mapper.WorkRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.mashiro.business.domain.WorkRecord">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="workRecord" column="work_record" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,work_record
+    </sql>
+</mapper>
