@@ -1,7 +1,7 @@
 import {defineConfig, loadEnv} from 'vite'
 import path from 'path'
 import createVitePlugins from './vite/plugins'
-
+import vueDevTools from 'vite-plugin-vue-devtools'
 const baseUrl = 'http://localhost:38080' // 后端接口
 
 // https://vitejs.dev/config/
@@ -15,6 +15,8 @@ export default defineConfig(({mode, command}) => {
         base: VITE_APP_ENV === 'production' ? '/' : '/',
         plugins: [
             createVitePlugins(env, command === 'build'),
+            //vitePluginWindicss(),
+            vueDevTools(),
         ],
         resolve: {
             // https://cn.vitejs.dev/config/#resolve-alias
