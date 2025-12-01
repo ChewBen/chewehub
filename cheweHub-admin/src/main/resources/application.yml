@@ -71,13 +71,13 @@ spring:
     redis:
       # 地址
       # host: 127.0.0.1
-      host: 118.178.137.219
+      host: ${REDIS_HOST:118.178.137.219}
     # 端口
-      port: 36379
+      port: ${REDIS_PORT:36379}
       # 数据库索引
-      database: 6
+      database: ${REDIS_DATABASE:6}
       # 密码
-      password: 123456
+      password: ${REDIS_PASSWORD:123456}
 #      password:
       # 连接超时时间
       timeout: 10s
