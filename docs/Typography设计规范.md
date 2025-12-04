@@ -3,14 +3,15 @@
 ## 📋 目录
 
 1. [设计理念](#设计理念)
-2. [色彩系统](#色彩系统)
-3. [字体系统](#字体系统)
-4. [布局系统](#布局系统)
-5. [交互设计](#交互设计)
-6. [动画效果](#动画效果)
-7. [组件规范](#组件规范)
-8. [响应式设计](#响应式设计)
-9. [代码实现示例](#代码实现示例)
+2. [Tailwind CSS 使用规范](#tailwind-css-使用规范)
+3. [色彩系统](#色彩系统)
+4. [字体系统](#字体系统)
+5. [布局系统](#布局系统)
+6. [交互设计](#交互设计)
+7. [动画效果](#动画效果)
+8. [组件规范](#组件规范)
+9. [响应式设计](#响应式设计)
+10. [代码实现示例](#代码实现示例)
 
 ---
 
@@ -22,6 +23,179 @@
 - **极简主义**：去除多余装饰，专注内容
 - **优雅简洁**：通过精心的排版和间距营造优雅感
 - **阅读体验**：大字号、宽松行距，提升阅读舒适度
+
+---
+
+## Tailwind CSS 使用规范
+
+### 优先级原则
+
+**核心原则：能使用 Tailwind CSS 的尽量使用，减少自定义 CSS**
+
+1. **优先使用 Tailwind 工具类**：对于常见的布局、间距、颜色、字体等样式，优先使用 Tailwind 的工具类
+2. **自定义样式仅用于特殊效果**：只有在 Tailwind 无法实现或过于复杂的情况下，才使用自定义 SCSS/CSS
+3. **混合使用策略**：可以同时使用 Tailwind 类和自定义样式，但要保持一致性
+
+### Tailwind 使用场景
+
+#### ✅ 推荐使用 Tailwind 的场景
+
+**布局类：**
+```vue
+<!-- 使用 Tailwind -->
+<div class="flex items-center justify-between">
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col md:flex-row">
+```
+
+**间距类：**
+```vue
+<!-- 使用 Tailwind -->
+<div class="p-4 m-2 mt-8 mb-4">
+<div class="gap-4 space-x-2">
+```
+
+**文字样式：**
+```vue
+<!-- 使用 Tailwind -->
+<h1 class="text-2xl font-bold text-center">
+<p class="text-gray-600 text-sm">
+```
+
+**响应式：**
+```vue
+<!-- 使用 Tailwind -->
+<div class="w-full md:w-1/2 lg:w-1/3">
+<div class="hidden md:block">
+```
+
+**列表样式：**
+```vue
+<!-- 使用 Tailwind -->
+<ul class="list-none p-0">
+<li class="block my-1">
+```
+
+**工具类：**
+```vue
+<!-- 使用 Tailwind -->
+<div class="inline-flex items-center gap-1">
+<div class="m-0 p-0">
+<div class="align-middle">
+```
+
+#### ❌ 不推荐使用 Tailwind 的场景
+
+**复杂的自定义动画：**
+```scss
+// 使用自定义 CSS
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+```
+
+**特殊的排版效果（如垂直文字）：**
+```scss
+// 使用自定义 CSS
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+```
+
+**复杂的悬停效果：**
+```scss
+// 使用自定义 CSS
+.site-title:hover {
+  padding: 15px 0 35px 0;
+  color: $backgroundColor !important;
+  background: $foregroundColor !important;
+}
+```
+
+**主题变量和品牌色：**
+```scss
+// 使用 SCSS 变量
+$foregroundColor: #2e405b;
+$backgroundColor: #ffffff;
+```
+
+### 实际应用示例
+
+#### 示例 1：文章列表项
+
+```vue
+<template>
+  <article class="mb-5 opacity-0 fade-in">
+    <h2 class="text-2xl font-bold my-1">
+      <a href="#">{{ post.title }}</a>
+    </h2>
+    <div class="text-base my-2">
+      <span class="inline-block mr-2">{{ formatDate(post.date) }}</span>
+      <span v-if="post.comments > 0" class="inline-block mr-2">
+        <el-icon class="align-middle"><ChatDotRound/></el-icon>
+        <span>{{ post.comments }} 条评论</span>
+      </span>
+    </div>
+    <p class="text-lg leading-relaxed">{{ post.abstract }}</p>
+  </article>
+</template>
+```
+
+#### 示例 2：导航菜单
+
+```vue
+<template>
+  <nav>
+    <ul class="list-none p-0">
+      <li class="block my-1">
+        <a :class="{ current: currentRoute === 'home' }" href="#">首页</a>
+      </li>
+      <li class="block my-1">
+        <a href="#">归档</a>
+      </li>
+    </ul>
+  </nav>
+</template>
+```
+
+#### 示例 3：响应式布局
+
+```vue
+<template>
+  <div class="flex flex-col md:flex-row h-screen">
+    <aside class="w-full md:w-1/4 fixed md:relative">
+      <!-- 侧边栏内容 -->
+    </aside>
+    <main class="w-full md:w-3/4 overflow-y-auto">
+      <!-- 主内容 -->
+    </main>
+  </div>
+</template>
+```
+
+### 最佳实践
+
+1. **保持一致性**：同类元素使用相同的 Tailwind 类组合
+2. **避免过度嵌套**：Tailwind 类应该简洁明了
+3. **合理使用响应式前缀**：`sm:`, `md:`, `lg:`, `xl:` 等
+4. **组合使用**：可以将 Tailwind 类与自定义类组合使用
+
+```vue
+<!-- 组合使用示例 -->
+<div class="post-container flex flex-col mb-5">
+  <!-- Tailwind 类 + 自定义类 -->
+</div>
+```
+
+### 代码审查清单
+
+- [ ] 是否优先使用了 Tailwind 工具类？
+- [ ] 自定义样式是否有必要（Tailwind 无法实现）？
+- [ ] 响应式是否使用了 Tailwind 断点？
+- [ ] 间距是否使用了 Tailwind 的 spacing 系统？
+- [ ] 颜色是否使用了 Tailwind 的 color 系统（如果是标准色）？
 
 ---
 
@@ -435,6 +609,24 @@ footer {
 ## 响应式设计
 
 ### 断点定义
+
+#### 使用 Tailwind 响应式断点
+
+```vue
+<!-- 使用 Tailwind 响应式类 -->
+<div class="w-full md:w-3/4 lg:w-2/3">
+<div class="hidden md:block">
+<div class="text-sm md:text-base lg:text-lg">
+```
+
+**Tailwind 默认断点：**
+- `sm:` - 640px 及以上
+- `md:` - 768px 及以上
+- `lg:` - 1024px 及以上
+- `xl:` - 1280px 及以上
+- `2xl:` - 1536px 及以上
+
+#### 自定义断点（SCSS）
 
 ```scss
 // 移动端断点

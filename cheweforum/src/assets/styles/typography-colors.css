@@ -1,0 +1,15 @@
+/* Typography 主题颜色配置 */
+:root {
+  /* Typography 颜色变量 */
+  --typography-bg: #ffffff;
+  --typography-fg: #2e405b;
+  --typography-fg-dark: #1a2d42;  /* darken 30% */
+  --typography-fg-light: #3d5670; /* lighten 10% */
+  
+  /* CSS 变量，可在 JavaScript 中使用 */
+  --color-typography-bg: var(--typography-bg);
+  --color-typography-fg: var(--typography-fg);
+  --color-typography-fg-dark: var(--typography-fg-dark);
+  --color-typography-fg-light: var(--typography-fg-light);
+}
+

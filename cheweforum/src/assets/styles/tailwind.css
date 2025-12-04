@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+@import './fonts.css';
+@import './typography-colors.css';
+
+/* Tailwind CSS 4.x 主题配置 */
+@theme {
+  --font-dream-serif-w20: 'Dream Han Serif W20', serif;
+  --font-dream-sans-w20: 'Dream Han Sans W20', sans-serif;
+  --font-dream-sans-w14: 'Dream Han Sans W14', sans-serif;
+  --font-mulish: 'Mulish', sans-serif;
+}
+
+/* Tailwind CSS 4.x 自定义字体类 */
+@layer utilities {
+  .font-dream-serif-w20 {
+    font-family: var(--font-dream-serif-w20);
+  }
+  
+  .font-dream-sans-w20 {
+    font-family: var(--font-dream-sans-w20);
+  }
+  
+  .font-dream-sans-w14 {
+    font-family: var(--font-dream-sans-w14);
+  }
+  
+  .font-mulish {
+    font-family: var(--font-mulish);
+  }
+}
+
+/* 基础样式重置 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+

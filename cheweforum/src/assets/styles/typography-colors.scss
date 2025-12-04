@@ -1,0 +1,11 @@
+// Typography 主题颜色配置（SCSS 变量）
+// 这些颜色已统一配置到 Tailwind CSS 中，可在 tailwind.config.js 中使用
+
+// 基础颜色
+$typography-bg: #ffffff;           // 背景色
+$typography-fg: #2e405b;           // 前景色（文字颜色）
+
+// 衍生颜色
+$typography-fg-dark: #1a2d42;      // 深色前景（darken 30%）
+$typography-fg-light: #3d5670;     // 浅色前景（lighten 10%）
+
