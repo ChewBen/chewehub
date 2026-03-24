@@ -1,4 +1,6 @@
 # 基础镜像
+# 使用官方 OpenJDK 镜像
+# 如果网络较慢，可以使用国内镜像源或预先拉取: docker pull openjdk:17
 FROM openjdk:17
 
 #作者信息
@@ -11,7 +13,8 @@ ENV HOME_PATH /home
 WORKDIR $HOME_PATH
 
 #应用构建成功后的jar复制到容器指定目录下
-ADD target/SpringBoot-0.0.1-SNAPSHOT.jar $HOME_PATH/app.jar
+# 注意：构建时需要先执行 mvn clean package，jar包位于 cheweHub-admin/target/cheweHub-admin.jar
+ADD cheweHub-admin/target/cheweHub-admin.jar $HOME_PATH/app.jar
 
 #指定容器内部端口
 EXPOSE 38080

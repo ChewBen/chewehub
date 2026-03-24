@@ -18,13 +18,20 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: import.meta.env.VITE_APP_BASE_API,
+  // 如果没有设置环境变量，默认使用 /dev-api（开发环境代理前缀）
+  baseURL: import.meta.env.VITE_APP_BASE_API || '/dev-api',
   // 超时
   timeout: 10000
 })
 
 // request拦截器
 service.interceptors.request.use(config => {
+  console.log('Request 拦截器 - 发起请求:', {
+    url: config.url,
+    method: config.method,
+    data: config.data
+  })
+  
   // 是否需要设置 token
   const isToken = (config.headers || {}).isToken === false
   // 是否需要防止数据重复提交
@@ -76,10 +83,19 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+    console.log('响应拦截器 - 收到响应:', res)
+    
+    // 检查响应是否为 HTML（说明代理失败）
+    if (typeof res.data === 'string' && res.data.trim().startsWith('<!DOCTYPE')) {
+      return Promise.reject(new Error('API请求失败：请检查代理配置和后端服务是否正常运行'))
+    }
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default']
+    
+    console.log('响应拦截器 - 状态码:', code, '消息:', msg)
+    
     // 二进制数据则直接返回
     if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
       return res.data
@@ -112,7 +128,19 @@ service.interceptors.response.use(res => {
       Notification.error('错误', msg)
       return Promise.reject('error')
     } else {
-      return  Promise.resolve(res.data)
+      // 对于验证码API等特殊接口，需要返回完整的数据结构
+      // 如果响应数据在 data 字段中，则返回 data，否则返回整个 res.data（但不包括 code 和 msg）
+      if (res.data.data !== undefined) {
+        // 标准格式：{ code: 200, msg: "...", data: {...} }
+        console.log('响应拦截器 - 返回标准格式数据:', res.data.data)
+        return Promise.resolve(res.data.data)
+      } else {
+        // 直接返回格式：{ code: 200, msg: "...", ...其他字段 }
+        // 返回时排除 code 和 msg，只返回业务数据
+        const { code, msg, ...rest } = res.data
+        console.log('响应拦截器 - 返回直接格式数据:', rest)
+        return Promise.resolve(rest)
+      }
     }
   },
   error => {

@@ -199,7 +199,16 @@ public class RepaymentPlansController extends BaseController
     @GetMapping("/getStartAndEndDate")
     public AjaxResult  getStartAndEndDate() {
         return success(repaymentPlansService.getStartAndEndDate());
-        
+
+    }
+
+    /**
+     * 获取进行中还款计划的日期范围（最早开始、最晚结束），供前端日历用。
+     * 注意：须在 @GetMapping("/{id}") 之前定义，否则 "getDateRange" 会被当作 id 解析。
+     */
+    @GetMapping("/getDateRange")
+    public AjaxResult getDateRange() {
+        return success(repaymentPlansService.getStartAndEndDate());
     }
 
     /**

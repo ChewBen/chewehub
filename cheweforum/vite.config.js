@@ -21,9 +21,9 @@ export default defineConfig(({mode, command}) => {
         // 部署路径
         base: VITE_APP_ENV === 'production' ? '/' : '/',
         
-        plugins: [
-            vue(),
-            vueDevTools(),
+    plugins: [
+        vue(),
+        vueDevTools(),
             tailwindcss({
                 config: './tailwind.config.js'
             }),
@@ -69,11 +69,11 @@ export default defineConfig(({mode, command}) => {
             })() : []),
         ],
         
-        resolve: {
-            alias: {
+    resolve: {
+        alias: {
                 '~': path.resolve(__dirname, './'),
-                '@': fileURLToPath(new URL('./src', import.meta.url))
-            },
+            '@': fileURLToPath(new URL('./src', import.meta.url))
+        },
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
         },
         
@@ -93,7 +93,7 @@ export default defineConfig(({mode, command}) => {
         },
         
         // 开发服务器配置
-        server: {
+    server: {
             port: 39092,
             host: true,
             open: true,

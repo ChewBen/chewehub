@@ -23,7 +23,7 @@
               href="#"
               @click.prevent="navigateTo('archive')"
             >
-              归档
+              财务
             </a>
           </li>
           <li>
@@ -183,6 +183,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import {
   ShareIcon,
   ArrowTopRightOnSquareIcon,
@@ -193,7 +194,16 @@ import {
 // 配置数据
 const titlePrimary = ref("活版印字");
 const titleSecondary = ref("Typography");
-const currentRoute = ref("home");
+const route = useRoute();
+const router = useRouter();
+const currentRoute = computed(() => {
+  // 根据当前路由路径判断当前路由名称
+  if (route.path === '/') return 'home';
+  if (route.path === '/plans') return 'archive';
+  if (route.path === '/categories') return 'categories';
+  if (route.path === '/tags') return 'tags';
+  return 'home';
+});
 const currentPage = ref(1);
 const postsPerPage = ref(10); // 保留用于后续扩展
 const showPageCount = ref(false); // 隐藏分页计数，因为只显示一页
@@ -263,9 +273,19 @@ const totalPages = computed(() => {
 });
 
 // 方法
-const navigateTo = (route) => {
-  currentRoute.value = route;
-  // 这里可以添加路由跳转逻辑
+const navigateTo = (routeName) => {
+  // 路由名称到路径的映射
+  const routeMap = {
+    'home': '/',
+    'archive': '/plans',
+    'categories': '/categories',
+    'tags': '/tags'
+  };
+  
+  const path = routeMap[routeName];
+  if (path) {
+    router.push(path);
+  }
 };
 
 const viewPost = (post) => {
@@ -349,14 +369,11 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-// 引入统一的颜色配置（SCSS 变量）
-@import "@/assets/styles/typography-colors.scss";
-
 // Typography 风格变量（使用统一配置的颜色）
-$backgroundColor: $typography-bg;
-$foregroundColor: $typography-fg;
-$foregroundColorDark: $typography-fg-dark;
-$foregroundColorLight: $typography-fg-light;
+$backgroundColor: #ffffff;
+$foregroundColor: #2e405b;
+$foregroundColorDark: #1a2d42;
+$foregroundColorLight: #3d5670;
 
 // 顶部导航栏样式
 .top-navbar {

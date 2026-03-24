@@ -62,17 +62,30 @@ export const constantRoutes = [
             component: () => import('@/views/home/home.vue'),
             hidden: true
         },
-
+        // 博客风格首页（独立页面，不使用Layout）
         {
-            path: '',
+            path: '/home',
+            component: () => import('@/views/business/forum/index.vue'),
+            hidden: true,
+            meta: {title: '首页'}
+        },
+        // 默认根路径直接重定向到博客首页（不经过Layout）
+        {
+            path: '/',
+            redirect: '/home',
+            hidden: true
+        },
+        // 管理后台首页（保留，可通过/dashboard访问）
+        {
+            path: '/dashboard',
             component: Layout,
-            redirect: '/index',
+            hidden: true,
             children: [
                 {
-                    path: '/index',
+                    path: '',
                     component: () => import('@/views/index'),
-                    name: 'Index',
-                    meta: {title: '首页', icon: 'dashboard', affix: true}
+                    name: 'Dashboard',
+                    meta: {title: '管理后台', icon: 'dashboard', affix: true}
                 }
             ]
         },
